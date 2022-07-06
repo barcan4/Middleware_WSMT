@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+}
+
+version '1.0-SNAPSHOT'
+
+repositories {
+    flatDir {
+        dirs 'C:\\Users\\Barcoaie\\Desktop\\Facultate\\Master\\Sem2\\WSMT\\3.Middleware\\apache-activemq-5.17.1-bin'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'org.apache.logging.log4j', name:'log4j-slf4j-impl', version: '2.17.2'
+    //implementation group: 'org.apache.activemq', name:'activemq-client', version: '5.17.1'
+    implementation group: 'javax.jms', name: 'javax.jms-api', version: '2.0.1'
+    implementation name: 'activemq-all-5.17.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "mainSystem"
+    }
+}
+
+task fatJar(type: Jar) {
+    duplicatesStrategy(duplicatesStrategy.EXCLUDE)
+    manifest.from jar.manifest
+    classifier = 'all'
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
+build {
+    artifacts {
+        archives fatJar
+    }
+}
